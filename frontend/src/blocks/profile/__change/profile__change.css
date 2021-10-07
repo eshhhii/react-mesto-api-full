@@ -1,0 +1,16 @@
+.profile__change {
+  background-image: url(../../../images/pencil.svg);
+  height: 26px;
+  min-width: 26px;
+  border-radius: 0px;
+  background-color: transparent;
+  position: absolute;
+  left: 40%;
+  top: 40%;
+  border: none;
+  display: none;
+}
+
+.profile__change:hover {
+  cursor: pointer;
+}
