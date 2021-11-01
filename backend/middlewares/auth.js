@@ -3,25 +3,26 @@ const BadAuth = require("../errors/BadAuth");
 
 const { NODE_ENV, JWT_SECRET } = process.env;
 
-const auth = (req, res, next) => {
-  if (!req.cookies.jwt) {
-    next(new BadAuth("Авторизация не прошла"));
-  } else {
-    const token = req.cookies.jwt;
-    let payload;
+module.exports = (req, res, next) => {
+  const { authorization } = req.headers;
 
-    try {
-      payload = jwt.verify(
-        token,
-        NODE_ENV === "production" ? JWT_SECRET : "dev-secret"
-      );
-    } catch (err) {
-      next(new BadAuth("Авторизация не прошла"));
-    }
-    req.user = payload;
-
-    next();
+  if (!authorization || !authorization.startsWith("Bearer ")) {
+    throw new BadAuth("Авторизация не прошла");
   }
-};
 
-module.exports = auth;
+  const token = authorization.replace("Bearer ", "");
+  let payload;
+
+  try {
+    payload = jwt.verify(
+      token,
+      NODE_ENV === "production" ? JWT_SECRET : "dev-secret"
+    );
+  } catch (err) {
+    throw new BadAuth("Авторизация не прошла");
+  }
+
+  req.user = payload; // записываем пейлоуд в объект запроса
+
+  return next(); // пропускаем запрос дальше
+};
