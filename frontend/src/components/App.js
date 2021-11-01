@@ -34,32 +34,26 @@ function App() {
   const history = useHistory();
 
   React.useEffect(() => {
-    if (loggedIn) {
-      api
-        .getUserInfo()
-        .then((cardList) => {
-          setCurrentUser(cardList);
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    }
-  }, [loggedIn]);
-
-  React.useEffect(() => {
-    if (loggedIn) {
-      api
-        .getInitialCards()
-        .then((cardList) => {
-          setCards(cardList);
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    }
+    api
+      .getUserInfo()
+      .then((cardList) => {
+        setCurrentUser(cardList);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   }, []);
 
-  /** Проверка токена на актуальность */
+  React.useEffect(() => {
+    api
+      .getInitialCards()
+      .then((cardList) => {
+        setCards(cardList);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, []);
 
   React.useEffect(() => {
     const jwt = localStorage.getItem("jwt");
@@ -71,9 +65,7 @@ function App() {
           setCurrentEmail(res.data.email);
           history.push("/");
         })
-        .catch((err) => {
-          console.log(err);
-        });
+        .catch((err) => console.log(err));
     }
   }, [history]);
 

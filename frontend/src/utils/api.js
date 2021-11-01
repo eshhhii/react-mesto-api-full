@@ -7,31 +7,24 @@ class Api {
     return res.ok ? res.json() : Promise.reject(`Ошибка! ${res.status}`);
   }
 
-  getInitialCards(token) {
+  getInitialCards() {
     return fetch(`${this._url}/cards`, {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
+      method: "GET",
+      headers: this._headers,
     }).then(this._checkResponse);
   }
 
-  getUserInfo(token) {
+  getUserInfo() {
     return fetch(`${this._url}/users/me`, {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
+      method: "GET",
+      headers: this._headers,
     }).then(this._checkResponse);
   }
 
-  editUserInfo(name, about, token) {
+  editUserInfo(name, about) {
     return fetch(`${this._url}/users/me`, {
       method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
+      headers: this._headers,
       body: JSON.stringify({
         name: name,
         about: about,
@@ -39,26 +32,20 @@ class Api {
     }).then(this._checkResponse);
   }
 
-  editUserAvatar(url, token) {
+  editUserAvatar(url) {
     return fetch(`${this._url}/users/me/avatar`, {
       method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
+      headers: this._headers,
       body: JSON.stringify({
         avatar: url,
       }),
     }).then(this._checkResponse);
   }
 
-  addCard(name, link, token) {
+  addCard(name, link) {
     return fetch(`${this._url}/cards`, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
+      headers: this._headers,
       body: JSON.stringify({
         name: name,
         link: link,
@@ -66,23 +53,17 @@ class Api {
     }).then(this._checkResponse);
   }
 
-  deleteCard(id, token) {
+  deleteCard(id) {
     return fetch(`${this._url}/cards/${id}`, {
       method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
+      headers: this._headers,
     }).then(this._checkResponse);
   }
 
-  changeLikeCardStatus(id, isLiked, token) {
+  changeLikeCardStatus(id, isLiked) {
     return fetch(`${this._url}/cards/likes/${id}`, {
       method: isLiked ? "PUT" : "DELETE",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
+      headers: this._headers,
     }).then(this._checkResponse);
   }
 }
@@ -90,8 +71,8 @@ class Api {
 const api = new Api({
   url: "https://api.eshhhii.nomoredomains.monster",
   headers: {
-    "Content-Type": "application/json",
     Authorization: `${localStorage.getItem("jwt")}`,
+    "content-type": "application/json",
   },
 });
 

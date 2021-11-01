@@ -2,7 +2,6 @@ require("dotenv").config();
 const express = require("express");
 const mongoose = require("mongoose");
 const helmet = require("helmet");
-const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const { errors } = require("celebrate");
 const userRouter = require("./routes/users");
@@ -20,7 +19,7 @@ const { requestLogger, errorLogger } = require("./middlewares/logger");
 const { PORT = 3000 } = process.env;
 
 const app = express();
-/*
+
 const allowedCors = [
   "http://eshhhii.nomoredomains.monster",
   "https://eshhhii.nomoredomains.monster",
@@ -44,7 +43,9 @@ app.use((req, res, next) => {
   }
 
   return next();
-});*/
+});
+
+app.use(helmet());
 
 mongoose.connect("mongodb://localhost:27017/mestodb", {
   useNewUrlParser: true,
@@ -52,20 +53,6 @@ mongoose.connect("mongodb://localhost:27017/mestodb", {
   useCreateIndex: true,
   useFindAndModify: false,
 });
-
-app.use(
-  cors({
-    origin: [
-      "http://eshhhii.nomoredomains.monster",
-      "https://eshhhii.nomoredomains.monster",
-    ],
-    methods: ["GET", "PUT", "POST", "DELETE"],
-    allowedHeaders: ["Authorization", "Content-Type"],
-    credentials: true,
-  })
-);
-
-app.use(helmet());
 
 app.use(express.json());
 app.use(cookieParser());
