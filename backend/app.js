@@ -1,6 +1,7 @@
 require("dotenv").config();
 const express = require("express");
 const mongoose = require("mongoose");
+const cors = require("cors");
 const helmet = require("helmet");
 const cookieParser = require("cookie-parser");
 const { errors } = require("celebrate");
@@ -20,12 +21,18 @@ const { PORT = 3000 } = process.env;
 
 const app = express();
 
+app.use(cors());
+
+/*
+
 const allowedCors = [
   "http://eshhhii.nomoredomains.monster",
   "https://eshhhii.nomoredomains.monster",
   "http://localhost:3000",
   "https://localhost:3000",
 ];
+
+
 app.use((req, res, next) => {
   const { origin } = req.headers;
   const { method } = req;
@@ -43,7 +50,7 @@ app.use((req, res, next) => {
   }
 
   return next();
-});
+}); */
 
 app.use(helmet());
 
