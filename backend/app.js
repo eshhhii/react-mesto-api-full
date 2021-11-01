@@ -1,5 +1,6 @@
 const express = require("express");
 const mongoose = require("mongoose");
+const helmet = require("helmet");
 const cookieParser = require("cookie-parser");
 const { errors } = require("celebrate");
 const userRouter = require("./routes/users");
@@ -41,6 +42,8 @@ app.use((req, res, next) => {
 
   return next();
 });
+
+app.use(helmet());
 
 mongoose.connect("mongodb://localhost:27017/mestodb", {
   useNewUrlParser: true,
