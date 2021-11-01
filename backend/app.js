@@ -8,6 +8,7 @@ const userRouter = require("./routes/users");
 const cardRouter = require("./routes/cards");
 const { createUser, login } = require("./controllers/users");
 const auth = require("./middlewares/auth");
+const handleError = require("./middlewares/handleError");
 const {
   validationLogin,
   validationCreateUser,
@@ -67,13 +68,7 @@ app.use(() => {
 });
 app.use(errorLogger);
 app.use(errors());
-app.use((err, req, res, next) => {
-  const { statusCode = 500, message } = err;
-  res.status(statusCode).send({
-    message: statusCode === 500 ? "На сервере произошла ошибка" : message,
-  });
-  next();
-});
+app.use(handleError());
 
 /* eslint-disable no-console */
 app.listen(PORT, () => {
