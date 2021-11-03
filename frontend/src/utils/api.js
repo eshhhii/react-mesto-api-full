@@ -88,7 +88,7 @@ class Api {
 }
 
 const api = new Api({
-  url: "https://api.eshhhii.nomoredomains.monster",
+  url: "http://api.eshhhii.nomoredomains.monster",
   headers: {
     Authorization: `${localStorage.getItem("jwt")}`,
     "content-type": "application/json",

@@ -9,7 +9,7 @@ const userRouter = require("./routes/users");
 const cardRouter = require("./routes/cards");
 const { createUser, login } = require("./controllers/users");
 const auth = require("./middlewares/auth");
-const handleError = require("./middlewares/handleError");
+const { handleError } = require("./middlewares/handleError");
 const {
   validationLogin,
   validationCreateUser,
@@ -17,40 +17,25 @@ const {
 const { NotFound } = require("./errors/NotFound");
 const { requestLogger, errorLogger } = require("./middlewares/logger");
 
-const { PORT = 3000 } = process.env;
+const { PORT = 3001 } = process.env;
+
+const options = {
+  origin: [
+    "http://eshhhii.nomoredomains.monster",
+    "https://eshhhii.nomoredomains.monster",
+    "http://localhost:3000",
+    "https://localhost:3000",
+  ],
+  methods: ["GET", "HEAD", "PUT", "PATCH", "POST", "DELETE"],
+  preflightContinue: false,
+  optionsSuccessStatus: 204,
+  allowedHeaders: ["Content-Type", "origin", "Authorization", "Accept"],
+  credentials: true,
+};
 
 const app = express();
 
-app.use(cors());
-
-/*
-
-const allowedCors = [
-  "http://eshhhii.nomoredomains.monster",
-  "https://eshhhii.nomoredomains.monster",
-  "http://localhost:3000",
-  "https://localhost:3000",
-];
-
-
-app.use((req, res, next) => {
-  const { origin } = req.headers;
-  const { method } = req;
-  const DEFAULT_ALLOWED_METHODS = "GET,HEAD,PUT,PATCH,POST,DELETE";
-  const requestHeaders = req.headers["access-control-request-headers"];
-  if (allowedCors.includes(origin)) {
-    res.header("Access-Control-Allow-Origin", origin);
-    res.header("Access-Control-Allow-Credentials", "true");
-  }
-  if (method === "OPTIONS") {
-    res.header("Access-Control-Allow-Methods", DEFAULT_ALLOWED_METHODS);
-    res.header("Access-Control-Allow-Headers", requestHeaders);
-
-    return res.status(200).send();
-  }
-
-  return next();
-}); */
+app.use("*", cors(options));
 
 app.use(helmet());
 
@@ -75,7 +60,7 @@ app.use(() => {
 });
 app.use(errorLogger);
 app.use(errors());
-app.use(handleError());
+app.use(handleError);
 
 /* eslint-disable no-console */
 app.listen(PORT, () => {
