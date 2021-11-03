@@ -124,6 +124,43 @@ const updateAvatar = (req, res, next) => {
 
 const login = (req, res, next) => {
   const { email, password } = req.body;
+  User.findOne({ email })
+    .select("+password")
+    .then((user) => {
+      if (!user) {
+        throw new NotFound("Нет пользователя с таким id");
+      } else {
+        bcrypt.compare(password, user.password, (error, isValid) => {
+          if (error) {
+            throw new BadRequest("Неверный запрос");
+          }
+          if (!isValid) {
+            throw new BadAuth("Неправильный пароль");
+          }
+          if (isValid) {
+            const token = jwt.sign({ _id: user._id }, JWT_SECRET, {
+              expiresIn: "7d",
+            });
+            // отправим токен, браузер сохранит его в куках
+            res
+              .cookie("jwt", token, {
+                httpOnly: true,
+                sameSite: "none",
+                secure: true,
+              })
+              .send({ token });
+          }
+        });
+      }
+    })
+    .catch(() => {
+      throw new BadAuth("Ошибка авторизации");
+    })
+    .catch(next);
+};
+/*
+const login = (req, res, next) => {
+  const { email, password } = req.body;
 
   return User.findUserByCredentials(email, password)
     .then((user) => {
@@ -139,7 +176,7 @@ const login = (req, res, next) => {
       throw new BadAuth("Ошибка авторизации");
     })
     .catch(next);
-};
+};*/
 
 const getCurrentUser = (req, res, next) => {
   const userId = req.user._id;
