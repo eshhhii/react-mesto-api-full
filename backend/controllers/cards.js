@@ -5,7 +5,7 @@ const Forbidden = require("../errors/Forbidden");
 
 const getCards = (req, res, next) => {
   Card.find({})
-    .then((cards) => res.status(200).send({ data: cards }))
+    .then((cards) => res.status(200).send(cards))
     .catch((err) => next(err));
 };
 
@@ -13,14 +13,12 @@ const createCard = (req, res, next) => {
   const { name, link } = req.body;
   const owner = req.user._id;
   Card.create({ name, link, owner })
-    .then((card) => res.status(200).send({ data: card }))
+    .then((card) => res.send({ data: card })) //просто сard
     .catch((err) => {
       if (err.name === "ValidationError") {
         throw new BadRequest(
           "Переданы некорректные данные в методы создания карточки"
         );
-      } else {
-        next(err);
       }
     })
     .catch(next);
@@ -42,15 +40,13 @@ const deleteCard = (req, res, next) => {
           if (!currentCard) {
             throw new NotFound("Карточка не найдена");
           }
-          return res.status(200).send({ message: "Карточка удалена" });
+          return res.status(200).send(card);
         })
         .catch((err) => {
           if (err.name === "CastError") {
             throw new BadRequest(
               "Переданы некорректные данные в методы удалении карточки"
             );
-          } else {
-            next(err);
           }
         })
         .catch(next);
@@ -59,16 +55,17 @@ const deleteCard = (req, res, next) => {
 };
 
 const likeCard = (req, res, next) => {
+  const { cardId } = req.params;
   Card.findByIdAndUpdate(
-    req.params.cardId,
+    cardId,
     { $addToSet: { likes: req.user._id } },
-    { new: true }
+    { new: true, runValidators: true }
   )
-    .then((data) => {
-      if (!data) {
+    .then((card) => {
+      if (!card) {
         throw new NotFound("Нет данных");
       }
-      return res.status(200).send({ message: "Лайк поставлен" });
+      return res.status(200).send(card);
     })
     .catch((err) => {
       if (err.name === "CastError") {
@@ -81,16 +78,17 @@ const likeCard = (req, res, next) => {
 };
 
 const dislikeCard = (req, res, next) => {
+  const { cardId } = req.params;
   Card.findByIdAndUpdate(
-    req.params.cardId,
+    cardId,
     { $pull: { likes: req.user._id } },
     { new: true }
   )
-    .then((data) => {
-      if (!data) {
+    .then((card) => {
+      if (!card) {
         throw new NotFound("Нет данных");
       }
-      return res.status(200).send({ message: "Лайк убран" });
+      return res.status(200).send(card);
     })
     .catch((err) => {
       if (err.name === "CastError") {

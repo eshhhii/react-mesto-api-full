@@ -12,7 +12,11 @@ function Login({ onLogin }) {
   }
   function handleSubmit(e) {
     e.preventDefault();
-    onLogin(email, password);
+    if (!email || !password) {
+      return;
+    } else {
+      onLogin(email, password);
+    }
   }
   return (
     <section className="sign">

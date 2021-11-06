@@ -1,4 +1,4 @@
-export const BASE_URL = "http://api.eshhhii.nomoredomains.monster";
+export const BASE_URL = "http://localhost:3001";
 
 const checkResponse = (res) => {
   return res.ok ? res.json() : Promise.reject(`Ошибка! ${res.status}`);
@@ -20,29 +20,17 @@ export const authorize = (email, password) => {
     headers: {
       "Content-Type": "application/json",
     },
+    credentials: "include",
     body: JSON.stringify({ email, password }),
-  })
-    .then((res) => {
-      if (res.status === 400) {
-        throw new Error("Не все поля заполнены");
-      } else if (res.status === 401) {
-        throw new Error("Email не зарегистрирован");
-      } else return res.json();
-    })
-    .then((res) => {
-      if (res.token) {
-        localStorage.setItem("jwt", res.token);
-        return res;
-      }
-    });
+  }).then(checkResponse);
 };
 
-export const checkToken = (token) => {
+export const checkToken = () => {
   return fetch(`${BASE_URL}/users/me`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
     },
+    credentials: "include",
   }).then(checkResponse);
 };

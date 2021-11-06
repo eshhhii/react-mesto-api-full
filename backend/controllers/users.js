@@ -138,10 +138,11 @@ const login = (req, res, next) => {
             throw new BadAuth("Неправильный пароль");
           }
           if (isValid) {
-            const token = jwt.sign({ _id: user._id }, JWT_SECRET, {
-              expiresIn: "7d",
-            });
-            // отправим токен, браузер сохранит его в куках
+            const token = jwt.sign(
+              { _id: user._id },
+              NODE_ENV === "production" ? JWT_SECRET : "dev-secret",
+              { expiresIn: "7d" }
+            );
             res
               .cookie("jwt", token, {
                 httpOnly: true,
