@@ -32,6 +32,8 @@ const options = {
   origin: [
     "http://eshhhii.nomoredomains.monster",
     "https://eshhhii.nomoredomains.monster",
+    "http://api.eshhhii.nomoredomains.monster",
+    "https://api.eshhhii.nomoredomains.monster",
     "http://localhost:3000",
     "https://localhost:3000",
   ],
