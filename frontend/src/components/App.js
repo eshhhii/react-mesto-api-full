@@ -37,8 +37,8 @@ function App() {
     if (loggedIn) {
       api
         .getUserInfo()
-        .then((res) => {
-          setCurrentUser(res.data);
+        .then((cardList) => {
+          setCurrentUser(cardList);
         })
         .catch((err) => {
           console.log(err);
@@ -50,8 +50,8 @@ function App() {
     if (loggedIn) {
       api
         .getInitialCards()
-        .then((data) => {
-          setCards(data.reverse());
+        .then((cardList) => {
+          setCards(cardList.reverse());
         })
         .catch((err) => {
           console.log(err);
@@ -64,7 +64,7 @@ function App() {
       .checkToken()
       .then((res) => {
         setLoggedIn(true);
-        setCurrentEmail(res.data.email);
+        setCurrentEmail(res.email);
         history.push("/");
       })
       .catch((err) => console.log(`Неверный токен: ${err}`));

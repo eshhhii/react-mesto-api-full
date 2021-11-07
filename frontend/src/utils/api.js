@@ -51,7 +51,7 @@ class Api {
     return fetch(`${this._url}/cards`, {
       method: "POST",
       headers: this._headers,
-      edentials: "include",
+      credentials: "include",
       body: JSON.stringify({
         name: name,
         link: link,

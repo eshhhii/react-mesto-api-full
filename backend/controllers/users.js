@@ -11,7 +11,7 @@ const { NODE_ENV, JWT_SECRET } = process.env;
 
 const getUsers = (req, res, next) => {
   User.find({})
-    .then((users) => res.status(200).send({ data: users }))
+    .then((users) => res.status(200).send(users))
     .catch((err) => next(err));
 };
 
@@ -21,7 +21,7 @@ const getUser = (req, res, next) => {
       if (!user) {
         throw new NotFound("Нет пользователя с таким id");
       }
-      res.send({ data: user });
+      res.send(user); //мб здесь user? { data: user }
     })
     .catch((err) => {
       if (err.name === "CastError") {
@@ -63,8 +63,9 @@ const createUser = (req, res, next) => {
                 );
               }
             })
-            .then((currentUser) =>
-              res.status(200).send({ currentUser: currentUser.toJSON() })
+            .then(
+              (currentUser) =>
+                res.status(200).send({ currentUser: currentUser.toJSON() }) //{ currentUser: currentUser.toJSON() }
             )
             .catch((err) => {
               if (err.name === "ValidationError") {
@@ -89,7 +90,7 @@ const updateProfile = (req, res, next) => {
     { name, about },
     { new: true, runValidators: true }
   )
-    .then((user) => res.status(200).send({ data: user }))
+    .then((user) => res.status(200).send(user))
     .catch((err) => {
       if (err.name === "ValidationError") {
         throw new BadRequest(
@@ -109,7 +110,7 @@ const updateAvatar = (req, res, next) => {
     { avatar },
     { new: true, runValidators: true }
   )
-    .then((user) => res.status(200).send({ data: user }))
+    .then((user) => res.status(200).send(user))
     .catch((err) => {
       if (err.name === "ValidationError") {
         throw new BadRequest(
@@ -145,11 +146,12 @@ const login = (req, res, next) => {
             );
             res
               .cookie("jwt", token, {
+                maxAge: 3600000 * 24 * 7,
                 httpOnly: true,
                 sameSite: "none",
                 secure: true,
               })
-              .send({ token });
+              .send({ message: "Вы авторизовались", token });
           }
         });
       }
@@ -159,26 +161,6 @@ const login = (req, res, next) => {
     })
     .catch(next);
 };
-/*
-const login = (req, res, next) => {
-  const { email, password } = req.body;
-
-  return User.findUserByCredentials(email, password)
-    .then((user) => {
-      const token = jwt.sign(
-        { _id: user._id },
-        NODE_ENV === "production" ? JWT_SECRET : "dev-secret",
-        { expiresIn: "7d" }
-      );
-
-      return res.send({ token });
-    })
-    .catch(() => {
-      throw new BadAuth("Ошибка авторизации");
-    })
-    .catch(next);
-};*/
-
 const getCurrentUser = (req, res, next) => {
   const userId = req.user._id;
   User.findById(userId)
@@ -186,7 +168,7 @@ const getCurrentUser = (req, res, next) => {
       if (!user) {
         throw new NotFound("Нет пользователя с таким id");
       }
-      res.send({ data: user });
+      res.status(200).send(user); //{ data: user }
     })
     .catch((err) => {
       if (err.name === "CastError") {

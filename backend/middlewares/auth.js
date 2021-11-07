@@ -3,9 +3,9 @@ const BadAuth = require("../errors/BadAuth");
 
 const { NODE_ENV, JWT_SECRET } = process.env;
 
-module.exports = (req, res, next) => {
+const auth = (req, res, next) => {
   if (!req.cookies.jwt) {
-    throw new BadAuth("Необходима авторизация");
+    next(new BadAuth("Авторизация не прошла"));
   } else {
     const token = req.cookies.jwt;
     let payload;
@@ -16,11 +16,12 @@ module.exports = (req, res, next) => {
         NODE_ENV === "production" ? JWT_SECRET : "dev-secret"
       );
     } catch (err) {
-      throw new BadAuth("Необходима авторизация");
+      next(new BadAuth("Авторизация не прошла"));
     }
-
     req.user = payload;
 
     next();
   }
 };
+
+module.exports = auth;
