@@ -41,6 +41,7 @@ const options = {
   preflightContinue: false,
   optionsSuccessStatus: 204,
   allowedHeaders: ["Content-Type", "origin", "Authorization", "Accept"],
+  AccessControlAllowCredentisnals: true,
   credentials: true,
 };
 
