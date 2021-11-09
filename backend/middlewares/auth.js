@@ -5,6 +5,7 @@ const { NODE_ENV, JWT_SECRET } = process.env;
 
 const auth = (req, res, next) => {
   if (!req.cookies.jwt) {
+    console.log(req.cookies.jwt);
     next(new BadAuth("Авторизация не прошла"));
   } else {
     const token = req.cookies.jwt;
