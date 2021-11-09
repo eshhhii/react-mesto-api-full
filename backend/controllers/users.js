@@ -148,8 +148,8 @@ const login = (req, res, next) => {
               .cookie("jwt", token, {
                 maxAge: 3600000 * 24 * 7,
                 httpOnly: true,
+                setCookie: "flavor=choco",
                 sameSite: "none",
-                setCookie: "flavor = choco",
                 secure: true,
               })
               .send({ message: "Вы авторизовались", token });
