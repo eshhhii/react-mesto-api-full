@@ -41,7 +41,6 @@ const options = {
   preflightContinue: false,
   optionsSuccessStatus: 204,
   allowedHeaders: ["Content-Type", "origin", "Authorization", "Accept"],
-  /*AccessControlAllowCredentisnals: true,*/
   credentials: true,
 };
 
@@ -52,6 +51,12 @@ app.use(helmet());
 app.use(express.json());
 app.use(cookieParser());
 app.use(requestLogger);
+
+app.get("/crash-test", () => {
+  setTimeout(() => {
+    throw new Error("Сервер сейчас упадёт");
+  }, 0);
+});
 
 app.post("/signup", validationCreateUser, createUser);
 app.post("/signin", validationLogin, login);
