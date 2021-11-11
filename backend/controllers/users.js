@@ -26,7 +26,7 @@ const getUser = (req, res, next) => {
     .catch((err) => {
       if (err.name === "CastError") {
         throw new BadRequest(
-          "Переданы некорректные данные в методы получения пользователя",
+          "Переданы некорректные данные в методы получения пользователя"
         );
       } else {
         next(err);
@@ -36,9 +36,7 @@ const getUser = (req, res, next) => {
 };
 
 const createUser = (req, res, next) => {
-  const {
-    name, about, avatar, email, password,
-  } = req.body;
+  const { name, about, avatar, email, password } = req.body;
 
   if (!email || !password) {
     res.status(400).send({
@@ -50,32 +48,30 @@ const createUser = (req, res, next) => {
       if (user) {
         throw new BadUnique("Пользователь существует");
       } else {
-        bcrypt.hash(password, 10).then((hash) => {
-          User.create({
-            name,
-            about,
-            avatar,
-            email,
-            password: hash,
-          })
-            .catch((err) => {
-              if (err.name === "MongoError" && err.code === 11000) {
-                throw new BadUnique(
-                  "Пользователь с таким email уже существует",
-                );
-              }
+        bcrypt
+          .hash(password, 10)
+          .then((hash) => {
+            User.create({
+              name,
+              about,
+              avatar,
+              email,
+              password: hash,
             })
-            .then((currentUser) => res.status(200).send({ currentUser: currentUser.toJSON() }))
-            .catch((err) => {
-              if (err.name === "ValidationError") {
-                throw new BadRequest(
-                  "Переданы некорректные данные в методы создания пользователя",
-                );
-              } else {
-                next(err);
-              }
-            });
-        });
+              .then((currentUser) =>
+                res.status(200).send({ currentUser: currentUser.toJSON() })
+              )
+              .catch((err) => {
+                if (err.name === "ValidationError") {
+                  throw new BadRequest(
+                    "Переданы некорректные данные в методы создания пользователя"
+                  );
+                } else {
+                  next(err);
+                }
+              });
+          })
+          .catch(next);
       }
     })
     .catch(next);
@@ -87,13 +83,13 @@ const updateProfile = (req, res, next) => {
   User.findByIdAndUpdate(
     userId,
     { name, about },
-    { new: true, runValidators: true },
+    { new: true, runValidators: true }
   )
     .then((user) => res.status(200).send(user))
     .catch((err) => {
       if (err.name === "ValidationError") {
         throw new BadRequest(
-          "Переданы некорректные данные в методы обновления профиля",
+          "Переданы некорректные данные в методы обновления профиля"
         );
       } else {
         next(err);
@@ -107,13 +103,13 @@ const updateAvatar = (req, res, next) => {
   User.findByIdAndUpdate(
     req.user._id,
     { avatar },
-    { new: true, runValidators: true },
+    { new: true, runValidators: true }
   )
     .then((user) => res.status(200).send(user))
     .catch((err) => {
       if (err.name === "ValidationError") {
         throw new BadRequest(
-          "Переданы некорректные данные в методы обновления аватара",
+          "Переданы некорректные данные в методы обновления аватара"
         );
       } else {
         next(err);
@@ -141,7 +137,7 @@ const login = (req, res, next) => {
             const token = jwt.sign(
               { _id: user._id },
               NODE_ENV === "production" ? JWT_SECRET : "dev-secret",
-              { expiresIn: "7d" },
+              { expiresIn: "7d" }
             );
             res
               .cookie("jwt", token, {
@@ -171,7 +167,7 @@ const getCurrentUser = (req, res, next) => {
     .catch((err) => {
       if (err.name === "CastError") {
         throw new BadRequest(
-          "Переданы некорректные данные в методы получения пользователя",
+          "Переданы некорректные данные в методы получения пользователя"
         );
       } else {
         next(err);

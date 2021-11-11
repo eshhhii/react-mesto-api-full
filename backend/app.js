@@ -14,7 +14,7 @@ const {
   validationLogin,
   validationCreateUser,
 } = require("./middlewares/validation");
-const { NotFound } = require("./errors/NotFound");
+const NotFound = require("./errors/NotFound");
 const { requestLogger, errorLogger } = require("./middlewares/logger");
 
 const { PORT = 3000 } = process.env;
@@ -63,7 +63,7 @@ app.post("/signin", validationLogin, login);
 
 app.use("/", auth, userRouter);
 app.use("/", auth, cardRouter);
-app.use(() => {
+app.use("*", auth, () => {
   throw new NotFound("Роутер не найден");
 });
 app.use(errorLogger);
