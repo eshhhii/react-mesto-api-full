@@ -77,7 +77,7 @@ class Api {
 }
 
 const api = new Api({
-  url: "https://api.eshhhii.nomoredomains.monster/",
+  url: "https://api.eshhhii.nomoredomains.monster",
   headers: {
     "content-type": "application/json",
   },
