@@ -21,12 +21,12 @@ const getUser = (req, res, next) => {
       if (!user) {
         throw new NotFound("Нет пользователя с таким id");
       }
-      res.send(user); //мб здесь user? { data: user }
+      res.send(user);
     })
     .catch((err) => {
       if (err.name === "CastError") {
         throw new BadRequest(
-          "Переданы некорректные данные в методы получения пользователя"
+          "Переданы некорректные данные в методы получения пользователя",
         );
       } else {
         next(err);
@@ -36,7 +36,9 @@ const getUser = (req, res, next) => {
 };
 
 const createUser = (req, res, next) => {
-  const { name, about, avatar, email, password } = req.body;
+  const {
+    name, about, avatar, email, password,
+  } = req.body;
 
   if (!email || !password) {
     res.status(400).send({
@@ -59,18 +61,15 @@ const createUser = (req, res, next) => {
             .catch((err) => {
               if (err.name === "MongoError" && err.code === 11000) {
                 throw new BadUnique(
-                  "Пользователь с таким email уже существует"
+                  "Пользователь с таким email уже существует",
                 );
               }
             })
-            .then(
-              (currentUser) =>
-                res.status(200).send({ currentUser: currentUser.toJSON() }) //{ currentUser: currentUser.toJSON() }
-            )
+            .then((currentUser) => res.status(200).send({ currentUser: currentUser.toJSON() }))
             .catch((err) => {
               if (err.name === "ValidationError") {
                 throw new BadRequest(
-                  "Переданы некорректные данные в методы создания пользователя"
+                  "Переданы некорректные данные в методы создания пользователя",
                 );
               } else {
                 next(err);
@@ -88,13 +87,13 @@ const updateProfile = (req, res, next) => {
   User.findByIdAndUpdate(
     userId,
     { name, about },
-    { new: true, runValidators: true }
+    { new: true, runValidators: true },
   )
     .then((user) => res.status(200).send(user))
     .catch((err) => {
       if (err.name === "ValidationError") {
         throw new BadRequest(
-          "Переданы некорректные данные в методы обновления профиля"
+          "Переданы некорректные данные в методы обновления профиля",
         );
       } else {
         next(err);
@@ -108,13 +107,13 @@ const updateAvatar = (req, res, next) => {
   User.findByIdAndUpdate(
     req.user._id,
     { avatar },
-    { new: true, runValidators: true }
+    { new: true, runValidators: true },
   )
     .then((user) => res.status(200).send(user))
     .catch((err) => {
       if (err.name === "ValidationError") {
         throw new BadRequest(
-          "Переданы некорректные данные в методы обновления аватара"
+          "Переданы некорректные данные в методы обновления аватара",
         );
       } else {
         next(err);
@@ -142,15 +141,13 @@ const login = (req, res, next) => {
             const token = jwt.sign(
               { _id: user._id },
               NODE_ENV === "production" ? JWT_SECRET : "dev-secret",
-              { expiresIn: "7d" }
+              { expiresIn: "7d" },
             );
             res
               .cookie("jwt", token, {
                 maxAge: 3600000 * 24 * 7,
                 httpOnly: true,
-                /*setCookie: "flavor=choco",*/
                 sameSite: true,
-                /*secure: true,*/
               })
               .send({ message: "Вы авторизовались", token });
           }
@@ -169,12 +166,12 @@ const getCurrentUser = (req, res, next) => {
       if (!user) {
         throw new NotFound("Нет пользователя с таким id");
       }
-      res.status(200).send(user); //{ data: user }
+      res.status(200).send(user);
     })
     .catch((err) => {
       if (err.name === "CastError") {
         throw new BadRequest(
-          "Переданы некорректные данные в методы получения пользователя"
+          "Переданы некорректные данные в методы получения пользователя",
         );
       } else {
         next(err);

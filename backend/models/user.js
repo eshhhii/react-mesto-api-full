@@ -1,7 +1,5 @@
 const mongoose = require("mongoose");
 const validator = require("validator");
-const NotFound = require("../errors/NotFound");
-const BadAuth = require("../errors/BadAuth");
 
 const userSchema = new mongoose.Schema({
   name: {

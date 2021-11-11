@@ -5,7 +5,6 @@ const { NODE_ENV, JWT_SECRET } = process.env;
 
 const auth = (req, res, next) => {
   if (!req.cookies.jwt) {
-    console.log(req.cookies.jwt);
     next(new BadAuth("Авторизация не прошла"));
   } else {
     const token = req.cookies.jwt;
@@ -14,7 +13,7 @@ const auth = (req, res, next) => {
     try {
       payload = jwt.verify(
         token,
-        NODE_ENV === "production" ? JWT_SECRET : "dev-secret"
+        NODE_ENV === "production" ? JWT_SECRET : "dev-secret",
       );
     } catch (err) {
       next(new BadAuth("Авторизация не прошла"));
