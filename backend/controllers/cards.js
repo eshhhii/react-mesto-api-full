@@ -17,7 +17,7 @@ const createCard = (req, res, next) => {
     .catch((err) => {
       if (err.name === "ValidationError") {
         next(
-          BadRequest("Переданы некорректные данные в методы создания карточки")
+          BadRequest("Переданы некорректные данные в методы создания карточки"),
         );
       }
     })
@@ -45,7 +45,7 @@ const deleteCard = (req, res, next) => {
         .catch((err) => {
           if (err.name === "CastError") {
             throw new BadRequest(
-              "Переданы некорректные данные в методы удалении карточки"
+              "Переданы некорректные данные в методы удалении карточки",
             );
           }
         })
@@ -59,7 +59,7 @@ const likeCard = (req, res, next) => {
   Card.findByIdAndUpdate(
     cardId,
     { $addToSet: { likes: req.user._id } },
-    { new: true, runValidators: true }
+    { new: true, runValidators: true },
   )
     .then((card) => {
       if (!card) {
@@ -82,7 +82,7 @@ const dislikeCard = (req, res, next) => {
   Card.findByIdAndUpdate(
     cardId,
     { $pull: { likes: req.user._id } },
-    { new: true }
+    { new: true },
   )
     .then((card) => {
       if (!card) {
