@@ -17,41 +17,41 @@ const createCard = (req, res, next) => {
     .catch((err) => {
       if (err.name === "ValidationError") {
         next(
-          BadRequest("Переданы некорректные данные в методы создания карточки"),
+          BadRequest("Переданы некорректные данные в методы создания карточки")
         );
+      } else {
+        next(err);
       }
-    })
-    .catch(next);
+    });
 };
 
 const deleteCard = (req, res, next) => {
   const userId = req.user._id;
   const { cardId } = req.params;
-  Card.findById(cardId)
-    .then((card) => {
-      if (!card) {
-        throw new NotFound("Карточка не найдена");
-      }
-      if (userId !== String(card.owner)) {
-        throw new Forbidden("Недостаточно прав");
-      }
-      Card.findOneAndRemove(cardId)
-        .then((currentCard) => {
-          if (!currentCard) {
-            throw new NotFound("Карточка не найдена");
-          }
-          return res.status(200).send(card);
-        })
-        .catch((err) => {
-          if (err.name === "CastError") {
-            throw new BadRequest(
-              "Переданы некорректные данные в методы удалении карточки",
-            );
-          }
-        })
-        .catch(next);
-    })
-    .catch(next);
+  Card.findById(cardId).then((card) => {
+    if (!card) {
+      throw new NotFound("Карточка не найдена");
+    }
+    if (userId !== String(card.owner)) {
+      throw new Forbidden("Недостаточно прав");
+    }
+    Card.findOneAndRemove(cardId)
+      .then((currentCard) => {
+        if (!currentCard) {
+          throw new NotFound("Карточка не найдена");
+        }
+        return res.status(200).send(card);
+      })
+      .catch((err) => {
+        if (err.name === "CastError") {
+          throw new BadRequest(
+            "Переданы некорректные данные в методы удалении карточки"
+          );
+        } else {
+          next(err);
+        }
+      });
+  });
 };
 
 const likeCard = (req, res, next) => {
@@ -59,7 +59,7 @@ const likeCard = (req, res, next) => {
   Card.findByIdAndUpdate(
     cardId,
     { $addToSet: { likes: req.user._id } },
-    { new: true, runValidators: true },
+    { new: true, runValidators: true }
   )
     .then((card) => {
       if (!card) {
@@ -82,7 +82,7 @@ const dislikeCard = (req, res, next) => {
   Card.findByIdAndUpdate(
     cardId,
     { $pull: { likes: req.user._id } },
-    { new: true },
+    { new: true }
   )
     .then((card) => {
       if (!card) {
